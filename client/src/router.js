@@ -6,6 +6,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <Cadastro/>,
   },
+  {
+    //path: 'endpoint',
+    //element: <Componente/>
+  }
 ]);
 
 export default router;
