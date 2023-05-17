@@ -11,9 +11,10 @@ export function Input({ label, name, type }) {
 }
 
 const StyledField = styled(Field)` 
-  border: 2px solid blue;
+  width: 100%;
+  border: 2px solid #19a7ce;
   border-radius: 10px;
-  padding: 5px;
+  padding: 7px;
 `;
 
 
