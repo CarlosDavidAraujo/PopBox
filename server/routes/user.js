@@ -5,4 +5,6 @@ const router = express.Router();
 
 router.post('/cadastro', userControllers.createUser); //acessa o createUser dentro do userControllers
 
+router.post('/login', userControllers.login);
+
 module.exports = router;

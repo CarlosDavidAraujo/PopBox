@@ -1,21 +1,39 @@
 import { ErrorMessage, Field } from "formik";
 import styled from "styled-components";
 
-export function Input({ label, name, type }) {
+export function Input({...props}) {
   return (
-    <div>
-      <StyledField name={name} type={type} placeholder={label} />
-      <ErrorMessage name={name} />
-    </div>
+    <Container>
+      <StyledField {...props} />
+      <ErrorMessage {...props} />
+    </Container>
   );
 }
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const StyledField = styled(Field)` 
   width: 100%;
-  border: 2px solid #19a7ce;
-  border-radius: 10px;
-  padding: 7px;
+  max-width: 400px;
+  height: 50px;
+  border: 3px solid var(--blue-1);
+  border-radius: 15px;
+  padding: 13px 20px;
+
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+
+  ::placeholder {
+    color: var(--text-placeholder);
+  } 
 `;
+
+
 
 
 /* Exemplo basico de como usar styled-components:

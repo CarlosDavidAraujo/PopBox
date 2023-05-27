@@ -1,10 +1,16 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Cadastro } from "./pages/Cadastro";
+import { HomePage } from "./features/signIn_login/containers/HomePage";
+import { UserFoldersPage } from "./features/user_folders/containers/UserFoldersPage";
+
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Cadastro/>,
+    element: <HomePage/>,
+  },
+  {
+    path: '/usuario',
+    element: <UserFoldersPage/>
   },
   {
     //path: 'endpoint',

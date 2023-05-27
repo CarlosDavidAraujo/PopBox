@@ -1,32 +1,59 @@
 const Directory = require("../models/Directory");
 const User = require("../models/User");
+const { use } = require("../routes/user");
 
 exports.createUser = async (req, res) => {
   try {
     const { nome, email, senha } = req.body;
 
+    const existingUser = await User.findOne({ where: { email: email } });
+
+    if (existingUser) {
+      return res.json({
+        error: "Já existe um usuário com o email cadastrado!",
+      });
+    }
+
     const user = await User.create({
-      nome,
-      email,
-      senha,
+      nome: nome,
+      email: email,
+      senha: senha,
       cota: 100.0,
       administrador: true,
     });
 
-    //createDirectory é um método especial criado pelo sequelize após definir a associação entre os modelos
-    //para entender melhor é só acessar esse link https://sequelize.org/docs/v6/core-concepts/assocs/#special-methodsmixins-added-to-instances
-    user.createDirectory({
+    const rootFolder = await user.createDirectory({
       nome: "root",
     });
 
-    res.send("Usuário cadastrado com sucesso");
+    if (!rootFolder) {
+      return res.json({
+        error: "Erro ao cadastrar usuário, tente mais tarde!",
+      });
+    }
+
+    res.json({ authenticated: true });
   } catch (err) {
     console.log(err);
-    res.send("Erro ao cadastrar usuário");
   }
 };
 
+exports.login = async (req, res) => {
+  try {
+    const { email, senha } = req.body;
 
-//demais controladores aqui
-//exemplo:
-//exports.login = async (req, res) => {}
+    const user = await User.findOne({
+      where: {
+        email: email,
+        senha: senha,
+      },
+    });
+
+    if (!user) {
+      return res.json({ error: "Login ou senha inválidos!" });
+    }
+    return res.send({ authenticated: true });
+  } catch (err) {
+    console.log(err);
+  }
+};
