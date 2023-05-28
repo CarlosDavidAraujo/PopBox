@@ -1,6 +1,4 @@
-const Directory = require("../models/Directory");
 const User = require("../models/User");
-const { use } = require("../routes/user");
 
 exports.createUser = async (req, res) => {
   try {
@@ -9,7 +7,7 @@ exports.createUser = async (req, res) => {
     const existingUser = await User.findOne({ where: { email: email } });
 
     if (existingUser) {
-      return res.json({
+      return res.status(500).json({
         error: "Já existe um usuário com o email cadastrado!",
       });
     }
@@ -27,12 +25,12 @@ exports.createUser = async (req, res) => {
     });
 
     if (!rootFolder) {
-      return res.json({
+      return res.status(500).json({
         error: "Erro ao cadastrar usuário, tente mais tarde!",
       });
     }
 
-    res.json({ authenticated: true });
+    res.status(200).json({ user_id: user.id });
   } catch (err) {
     console.log(err);
   }
@@ -50,10 +48,30 @@ exports.login = async (req, res) => {
     });
 
     if (!user) {
-      return res.json({ error: "Login ou senha inválidos!" });
+      return res.status(500).json({ error: "Login ou senha inválidos!" });
     }
-    return res.send({ authenticated: true });
+
+    return res.status(200).json({ user_id: user.id });
   } catch (err) {
     console.log(err);
+  }
+};
+
+exports.getUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      return res
+        .status(500)
+        .json({ error: "Houve um erro ao carregar os dados do seu perfil" });
+    }
+
+    console.log(user);
+    return res.status(200).json(user);
+  } catch (err) {
+    connsole.error(err);
   }
 };

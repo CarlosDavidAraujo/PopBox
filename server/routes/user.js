@@ -7,4 +7,6 @@ router.post('/cadastro', userControllers.createUser); //acessa o createUser dent
 
 router.post('/login', userControllers.login);
 
+router.get('/:id', userControllers.getUser);
+
 module.exports = router;

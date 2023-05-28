@@ -1,19 +1,28 @@
 import * as yup from "yup"; //biblioteca para validação de formulários
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../../../contexts/UserContext";
 import { api } from "../../../shared/services/api";
+import { useMutation } from "react-query";
 
 import { Formik } from "formik"; //biblioteca para criar formularios em react, muito facil de usar, so seguir esse exemplo
 import { Input } from "../../../shared/components/Input";
 import { SubmitButton } from "../../../shared/components/SubmitButton";
 import UserForm from "../../../shared/components/Form";
-import { useFormPost } from "../../../shared/hooks/useFormPost";
-import { useNavigate } from "react-router-dom";
 
 export function SignInForm({ onToLogin }) {
+  const { setUserId } = useContext(UserContext);
   const navigate = useNavigate();
-  const [error, handleSubmit] = useFormPost({
-    endpoint: "/usuario/cadastro",
-    onSuccess: () => navigate("/usuario"),
-  });
+
+  const { mutate, isError, error } = useMutation(
+    (values) => api.post("/usuario/cadastro", values),
+    {
+      onSuccess: (data) => {
+        setUserId(data.data.user_id);
+        navigate("/usuario");
+      },
+    }
+  );
 
   return (
     <UserForm>
@@ -21,7 +30,7 @@ export function SignInForm({ onToLogin }) {
       <UserForm.SubTitle>
         Criar sua conta nos serviços pop Box
       </UserForm.SubTitle>
-      <UserForm.Error>{error && error}</UserForm.Error>
+      <UserForm.Error>{isError && error.response.data.error}</UserForm.Error>
       <Formik
         initialValues={{
           nome: "",
@@ -36,7 +45,7 @@ export function SignInForm({ onToLogin }) {
           email: yup.string().required("Campo obrigatório"),
           senha: yup.string().required("Campo obrigatório"),
         })}
-        onSubmit={(values) => handleSubmit(values)}
+        onSubmit={(values) => mutate(values)}
       >
         <UserForm.Inputs>
           <Input name="nome" type="text" placeholder="Nome" />

@@ -5,7 +5,7 @@ export function UserMenu() {
   const navigate = useNavigate();
   return (
     <Container>
-      <UserPortrait />
+      <UserPortrait onClick={()=> navigate('/usuario/perfil')}/>
       <div>
         <UserName>Usuario pop</UserName>
         <LogoutButton onClick={()=> navigate('/')}>sair</LogoutButton>
@@ -31,7 +31,7 @@ const Container = styled.div`
   }
 `;
 
-const UserPortrait = styled.div`
+const UserPortrait = styled.a`
   width: 67px;
   height: 67px;
   aspect-ratio: 1;
