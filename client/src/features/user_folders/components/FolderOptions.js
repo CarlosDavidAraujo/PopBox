@@ -48,5 +48,6 @@ const MenuItem = styled.button`
 
   &:hover {
     background-color: var(--blue-2);
+    color: var(--bg);
   }
 `;

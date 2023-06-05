@@ -1,25 +1,25 @@
 import * as yup from "yup"; //biblioteca para validação de formulários
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
 import { useMutation } from "react-query";
 
 import { Formik } from "formik"; //biblioteca para criar formularios em react, muito facil de usar, so seguir esse exemplo
 import { Input } from "../../../shared/components/Input";
 import { SubmitButton } from "../../../shared/components/SubmitButton";
 import UserForm from "../../../shared/components/Form";
-import { UserContext } from "../../../contexts/UserContext";
+import { useAuth } from "../../../contexts/AuthContext";
 import { api } from "../../../shared/services/api";
 
 export function LoginForm({ onToSignIn }) {
-  const { setUserId } = useContext(UserContext);
+  const { setToken, setUser } = useAuth();
   const navigate = useNavigate();
 
   const { mutate, isError, error } = useMutation(
     (values) => api.post("/usuario/login", values),
     {
       onSuccess: (data) => {
-        setUserId(data.data.user_id);
-        navigate("/usuario");
+        setToken(data.data.token);
+        setUser(data.data.user);
+        navigate("/usuario/pastas");
       },
     }
   );

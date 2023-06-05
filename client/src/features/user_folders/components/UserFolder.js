@@ -1,11 +1,15 @@
 import styled from "styled-components";
 import { FolderIcon } from "../../../shared/components/FolderIcon";
+import { HiOutlineFolderOpen } from "react-icons/hi2";
+import { IconContext } from "react-icons";
 
 export function UserFolder({ label }) {
   return (
     <Container>
       <IconContainer>
-        <FolderIcon />
+        <IconContext.Provider value={{size: '10em', color: 'var(--blue-2)'}}>
+          <HiOutlineFolderOpen />
+        </IconContext.Provider>
       </IconContainer>
       <FolderLabel>{label}</FolderLabel>
     </Container>
@@ -20,12 +24,15 @@ const Container = styled.div`
 `;
 
 const IconContainer = styled.button`
-  width: 202px;
-  height: 190px;
+  width: 150px;
+  height: 150px;
   padding: 22px 28px;
   border: none;
   border-radius: 30px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   background: var(--bg);
 `;

@@ -7,6 +7,8 @@ router.post('/cadastro', userControllers.createUser); //acessa o createUser dent
 
 router.post('/login', userControllers.login);
 
-router.get('/:id', userControllers.getUser);
+router.put('/update', userControllers.update);
+
+router.delete('/delete/:id', userControllers.deleteUser);
 
 module.exports = router;

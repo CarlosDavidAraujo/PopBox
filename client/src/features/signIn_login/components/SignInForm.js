@@ -1,7 +1,6 @@
 import * as yup from "yup"; //biblioteca para validação de formulários
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { UserContext } from "../../../contexts/UserContext";
+import { useAuth } from "../../../contexts/AuthContext";
 import { api } from "../../../shared/services/api";
 import { useMutation } from "react-query";
 
@@ -11,15 +10,16 @@ import { SubmitButton } from "../../../shared/components/SubmitButton";
 import UserForm from "../../../shared/components/Form";
 
 export function SignInForm({ onToLogin }) {
-  const { setUserId } = useContext(UserContext);
+  const { setToken, setUser } = useAuth();
   const navigate = useNavigate();
 
   const { mutate, isError, error } = useMutation(
     (values) => api.post("/usuario/cadastro", values),
     {
       onSuccess: (data) => {
-        setUserId(data.data.user_id);
-        navigate("/usuario");
+        setToken(data.data.token);
+        setUser(data.data.user)
+        navigate("/usuario/pastas");
       },
     }
   );

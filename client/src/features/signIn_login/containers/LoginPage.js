@@ -4,7 +4,7 @@ import { useState } from "react";
 import { LoginForm } from "../components/LoginForm";
 import { Logo } from "../../../shared/components/Logo";
 
-export function HomePage() {
+export function LoginPage() {
   const [toSignIn, setToSignIn] = useState(false);
 
   return (

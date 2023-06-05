@@ -1,14 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useAuth } from "../../contexts/AuthContext";
 
 export function UserMenu() {
   const navigate = useNavigate();
+  const { user, setToken } = useAuth();
+
+  const handleLogout = () => {
+    setToken(null);
+    navigate("/");
+  };
+
   return (
     <Container>
-      <UserPortrait onClick={()=> navigate('/usuario/perfil')}/>
+      <UserPortrait onClick={() => navigate("/usuario/perfil")} />
       <div>
-        <UserName>Usuario pop</UserName>
-        <LogoutButton onClick={()=> navigate('/')}>sair</LogoutButton>
+        <UserName>{user.nome}</UserName>
+        <LogoutButton onClick={handleLogout}>sair</LogoutButton>
       </div>
     </Container>
   );
@@ -24,7 +32,8 @@ const Container = styled.div`
 
   background-color: var(--blue-2);
 
-  > div:nth-child(2) { //seleciona o segundo filho direto que seja uma div
+  > div:nth-child(2) {
+    //seleciona o segundo filho direto que seja uma div
     display: flex;
     flex-direction: column;
     align-items: start;
