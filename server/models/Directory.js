@@ -11,6 +11,10 @@ const Directory = sequelize.define('Directory', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  caminho: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  }
 });
 
 module.exports = Directory;

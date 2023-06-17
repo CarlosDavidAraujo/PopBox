@@ -1,21 +1,24 @@
 const { jwtSecret } = require("../config/auth");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const createFolder = require("../utils/createFolder");
+const Directory = require("../models/Directory");
 
 //--------------------- CADASTRO DE USUARIO -------------------------//
 
-exports.createUser = async (req, res) => {
+exports.create = async (req, res) => {
   try {
     const { nome, email, senha } = req.body;
 
+    //verifica se o usuario ja existe
     const existingUser = await User.findOne({ where: { email: email } });
-
     if (existingUser) {
       return res.status(401).json({
         error: "Já existe um usuário com o email cadastrado!",
       });
     }
 
+    //cria usuario
     const user = await User.create({
       nome: nome,
       email: email,
@@ -24,18 +27,21 @@ exports.createUser = async (req, res) => {
       administrador: false,
     });
 
+    //cria a primeira pasta do usuario que sera a raiz de seu repositorio
     const rootFolder = await user.createDirectory({
-      nome: "root",
+      nome: user.id,
+      caminho: user.id.toString(),
     });
-
     if (!rootFolder) {
       return res.status(500).json({
         error: "Erro ao cadastrar usuário, tente mais tarde!",
       });
     }
+    createFolder(user.id.toString());
 
+    //envio de dados do usuario para o front-end
+    user.dataValues.Directories = await user.getDirectories();
     const { senha: password, ...userWithoutPassword } = user.dataValues;
-
     const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: "1h" });
 
     res.status(200).json({ token: token, user: userWithoutPassword });
@@ -55,6 +61,9 @@ exports.login = async (req, res) => {
         email: email,
         senha: senha,
       },
+      include: {
+        model: Directory,
+      },
     });
 
     if (!user) {
@@ -62,7 +71,6 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: "1h" });
-
     const { senha: password, ...userWithoutPassword } = user.dataValues;
 
     res.status(200).json({ token: token, user: userWithoutPassword });
@@ -105,7 +113,7 @@ exports.update = async (req, res) => {
 
 //------------------------EXCLUSÃO DE CADASTRO ------------------------//
 
-exports.deleteUser = async (req, res) => {
+exports.delete = async (req, res) => {
   try {
     const { senha } = req.body;
     const { id } = req.params;
