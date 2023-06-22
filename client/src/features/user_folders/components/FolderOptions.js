@@ -19,13 +19,14 @@ export function FolderOptions() {
   const handleFolderCreation = () => {
     const { adjustedName, adjustedPath } = adjustFolderName(
       folders,
-      "nova pasta",
-      "/nova pasta"
+      "trabalhos",
+      "/faculdade/trabalhos"
     );
     mutate({
       userID: user.id,
       nome: adjustedName,
       caminho: adjustedPath,
+      diretorio_pai: 5,
     });
   };
 
