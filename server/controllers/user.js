@@ -27,7 +27,7 @@ exports.create = async (req, res) => {
       administrador: false,
     });
 
-    //cria a primeira pasta do usuario que sera a raiz de seu repositorio
+    //cria a primeira pasta do usuario que sera a raiz de seu repositorio, a pasta raiz é nomeada automaticamente com o ID do usuario
     const rootFolder = await user.createDirectory({
       nome: user.id,
       caminho: user.id.toString(),
@@ -40,7 +40,6 @@ exports.create = async (req, res) => {
     createFolder(user.id.toString());
 
     //envio de dados do usuario para o front-end
-    user.dataValues.Directories = await user.getDirectories();
     const { senha: password, ...userWithoutPassword } = user.dataValues;
     const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: "1h" });
 
@@ -61,9 +60,7 @@ exports.login = async (req, res) => {
         email: email,
         senha: senha,
       },
-      include: {
-        model: Directory,
-      },
+      attributes: { exclude: ["senha"] },
     });
 
     if (!user) {
@@ -71,9 +68,8 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: "1h" });
-    const { senha: password, ...userWithoutPassword } = user.dataValues;
-
-    res.status(200).json({ token: token, user: userWithoutPassword });
+    console.log(user);
+    res.status(200).json({ token, user });
   } catch (err) {
     console.log(err);
   }
@@ -85,7 +81,9 @@ exports.update = async (req, res) => {
   try {
     const { id, nome, email, senha, nova_senha } = req.body;
 
-    const user = await User.findByPk(id);
+    const user = await User.findByPk(id, {
+      include: [Directory],
+    });
 
     if (user.dataValues.senha !== senha) {
       return res.status(401).json({ error: "Senha incorreta!" });

@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
-const Directory = sequelize.define('Directory', {
+const Directory = sequelize.define("Directory", {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -14,7 +14,8 @@ const Directory = sequelize.define('Directory', {
   caminho: {
     type: DataTypes.STRING,
     allowNull: false,
-  }
+    unique: true,
+  },
 });
 
 module.exports = Directory;

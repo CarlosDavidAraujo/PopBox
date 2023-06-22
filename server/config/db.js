@@ -17,7 +17,7 @@ sequelize
   .then(() => {
     console.log("Conexão com o banco de dados estabelecida com sucesso.");
   })
-  .catch((error) => {
+  .catch(error => {
     console.error("Erro ao conectar-se ao banco de dados:", error);
   });
 
