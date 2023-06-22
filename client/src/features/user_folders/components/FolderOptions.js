@@ -8,16 +8,27 @@ import {
 } from "react-icons/hi2";
 import { useAddFolderMutation } from "../hooks/useAddFolderMutation";
 import { useAuth } from "../../../contexts/AuthContext";
-import { createNewFolder } from "../utils/createNewFolder";
+import { adjustFolderName } from "../utils/adjustFolderName";
 import { useFolders } from "../../../contexts/FolderContext";
 
 export function FolderOptions() {
   const { user } = useAuth();
   const { folders } = useFolders();
   const { mutate } = useAddFolderMutation();
+
   const handleFolderCreation = () => {
-    createNewFolder(user.id, folders, "nova pasta", "/nova pasta", mutate);
+    const { adjustedName, adjustedPath } = adjustFolderName(
+      folders,
+      "nova pasta",
+      "/nova pasta"
+    );
+    mutate({
+      userID: user.id,
+      nome: adjustedName,
+      caminho: adjustedPath,
+    });
   };
+
   return (
     <Container>
       <IconContext.Provider value={{ size: "1.5em" }}>

@@ -2,19 +2,19 @@ const Directory = require("../models/Directory");
 const fs = require("fs");
 const createFolder = require("../utils/createFolder");
 const { basePath } = require("../utils/basePath");
-const { Op, where } = require("sequelize");
+const { Op } = require("sequelize");
 
 exports.create = async (req, res) => {
   try {
-    const { id, nome, caminho } = req.body;
+    const { userID, nome, caminho } = req.body;
 
     const newDirectory = await Directory.create({
       nome,
       caminho,
-      proprietario: id,
+      proprietario: userID,
     });
 
-    createFolder(`${id.toString()}/${caminho}`);
+    createFolder(`${userID.toString()}/${caminho}`);
 
     res.status(200).json(newDirectory);
   } catch (err) {
@@ -25,26 +25,17 @@ exports.create = async (req, res) => {
 
 exports.rename = async (req, res) => {
   try {
-    const { id, caminho, novoCaminho, novoNome } = req.body;
-    const diretorioAntigo = `${basePath}/${id}/${caminho}`;
-    const novoDiretorio = `${basePath}/${id}/${novoCaminho}`;
+    const { userID, folderID, caminho, novoCaminho, novoNome } = req.body;
+    const diretorioAntigo = `${basePath}/${userID}${caminho}`;
+    const novoDiretorio = `${basePath}/${userID}${novoCaminho}`;
 
-    const directory = await Directory.findByPk(id);
+    const directory = await Directory.findByPk(folderID);
 
     // Renomeia o diretório no banco
-
-    const renamedDirectory = await directory.update(
-      {
-        nome: novoNome,
-        caminho: novoCaminho,
-      },
-      {
-        where: {
-          proprietario: id,
-          caminho: caminho,
-        },
-      }
-    );
+    const renamedDirectory = await directory.update({
+      nome: novoNome,
+      caminho: novoCaminho,
+    });
 
     //Renomeia no repositorio
     if (renamedDirectory) {
@@ -57,6 +48,7 @@ exports.rename = async (req, res) => {
     res.status(500).json({ erro: "Erro ao renomear diretório" });
   }
 };
+
 exports.findAll = async (req, res) => {
   try {
     const { id } = req.params;

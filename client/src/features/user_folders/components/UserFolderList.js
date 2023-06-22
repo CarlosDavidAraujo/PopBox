@@ -5,7 +5,7 @@ import { api } from "../../../shared/services/api";
 import { useQuery } from "react-query";
 import { useAuth } from "../../../contexts/AuthContext";
 
-const getDirectories = async userID => {
+const getDirectories = async (userID) => {
   const res = await api.get("/diretorios/" + userID);
   return res.data;
 };
@@ -16,7 +16,7 @@ export function UserFolderList() {
   const { isError, isLoading } = useQuery({
     queryKey: ["folders"],
     queryFn: () => getDirectories(user.id),
-    onSuccess: data => {
+    onSuccess: (data) => {
       setFolders(data);
     },
   });

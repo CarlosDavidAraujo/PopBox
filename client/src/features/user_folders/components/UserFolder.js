@@ -2,42 +2,47 @@ import styled from "styled-components";
 import { FcFolder } from "react-icons/fc";
 import { IconContext } from "react-icons";
 import { useState } from "react";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { api } from "../../../shared/services/api";
 import { useAuth } from "../../../contexts/AuthContext";
 import { renameFolderPath } from "../utils/renameFolderPath";
 import { useFolders } from "../../../contexts/FolderContext";
+import { useRenameFolderMutation } from "../hooks/useRenameFolderMutation";
+import { adjustFolderName } from "../utils/adjustFolderName";
 
 export function UserFolder({ folder }) {
-  const { folders, setFolders } = useFolders();
+  const { user } = useAuth();
+  const { folders } = useFolders();
   const [inputActive, setInputActive] = useState(false);
   const [folderName, setFolderName] = useState(folder.nome);
 
-  const mutation = useMutation({
-    mutationFn: () =>
-      api.post("/diretorios/rename", {
-        id: folder.id,
-        caminho: folder.caminho,
-        novoCaminho: renameFolderPath(folder.caminho, folderName),
-        novoNome: folderName,
-      }),
-    onSuccess: data => {
-      setFolders(prevFolders => {
-        const index = folders.findIndex(item => item.id === folder.id);
-        console.log(data);
-        return [...prevFolders, (prevFolders[index] = data.data)];
-      });
-    },
-  });
+  const { mutate } = useRenameFolderMutation(folder);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { value } = e.target;
     setFolderName(value);
   };
 
   const handleRename = () => {
+    const renamedPath = renameFolderPath(folder.caminho, folderName);
+
+    //verifica se o usuario realmente fez alguma alteração no nome da pasta
+    if (renamedPath !== folder.caminho) {
+      const { adjustedName, adjustedPath } = adjustFolderName(
+        folders,
+        folderName,
+        renamedPath
+      );
+      mutate({
+        folderID: folder.id,
+        userID: user.id,
+        caminho: folder.caminho,
+        novoCaminho: adjustedPath,
+        novoNome: adjustedName,
+      });
+    }
+
     setInputActive(false);
-    mutation.mutate();
   };
 
   return (
