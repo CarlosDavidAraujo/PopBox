@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { SignInForm } from "../components/SignInForm";
 import { useState } from "react";
 import { LoginForm } from "../components/LoginForm";
-import { Logo } from "../../../shared/components/Logo";
+import { Logo } from "../../../shared/components/icons/Logo";
 
 export function LoginPage() {
   const [toSignIn, setToSignIn] = useState(false);

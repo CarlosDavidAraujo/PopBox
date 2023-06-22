@@ -4,9 +4,8 @@ import { FolderOptions } from "../components/FolderOptions";
 
 export function UserFoldersPage() {
   return (
-    <UserLayout sidebarContent={<FolderOptions/>}>
-      <UserFolderList/>
+    <UserLayout sidebarContent={<FolderOptions />}>
+      <UserFolderList />
     </UserLayout>
   );
 }
-  

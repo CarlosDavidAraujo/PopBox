@@ -1,44 +1,101 @@
 import styled from "styled-components";
-import { FolderIcon } from "../../../shared/components/FolderIcon";
-import { HiOutlineFolderOpen } from "react-icons/hi2";
+import { FcFolder } from "react-icons/fc";
 import { IconContext } from "react-icons";
+import { useState } from "react";
+import { useMutation } from "react-query";
+import { api } from "../../../shared/services/api";
+import { useAuth } from "../../../contexts/AuthContext";
+import { renameFolderPath } from "../utils/renameFolderPath";
+import { useFolders } from "../../../contexts/FolderContext";
 
-export function UserFolder({ label }) {
+export function UserFolder({ folder }) {
+  const { folders, setFolders } = useFolders();
+  const [inputActive, setInputActive] = useState(false);
+  const [folderName, setFolderName] = useState(folder.nome);
+
+  const mutation = useMutation({
+    mutationFn: () =>
+      api.post("/diretorios/rename", {
+        id: folder.id,
+        caminho: folder.caminho,
+        novoCaminho: renameFolderPath(folder.caminho, folderName),
+        novoNome: folderName,
+      }),
+    onSuccess: data => {
+      setFolders(prevFolders => {
+        const index = folders.findIndex(item => item.id === folder.id);
+        console.log(data);
+        return [...prevFolders, (prevFolders[index] = data.data)];
+      });
+    },
+  });
+
+  const handleChange = e => {
+    const { value } = e.target;
+    setFolderName(value);
+  };
+
+  const handleRename = () => {
+    setInputActive(false);
+    mutation.mutate();
+  };
+
   return (
     <Container>
       <IconContainer>
-        <IconContext.Provider value={{size: '10em', color: 'var(--blue-2)'}}>
-          <HiOutlineFolderOpen />
+        <IconContext.Provider value={{ size: "8em", color: "var(--blue-2)" }}>
+          <FcFolder />
         </IconContext.Provider>
       </IconContainer>
-      <FolderLabel>{label}</FolderLabel>
+      {inputActive ? (
+        <RenameInput
+          value={folderName}
+          onChange={handleChange}
+          onBlur={handleRename}
+          autoFocus
+        />
+      ) : (
+        <FolderLabel onDoubleClick={() => setInputActive(true)}>
+          {folder.nome}
+        </FolderLabel>
+      )}
     </Container>
   );
 }
 
 const Container = styled.div`
+  width: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
 `;
 
 const IconContainer = styled.button`
-  width: 150px;
-  height: 150px;
-  padding: 22px 28px;
   border: none;
-  border-radius: 30px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background: var(--bg);
+  background-color: transparent;
 `;
 
 const FolderLabel = styled.h4`
+  margin-top: -10px;
   font-weight: 400;
-  font-size: 24px;
-  line-height: 29px;
+  font-size: 18px;
+  white-space: nowrap; /* Impede quebra de linha */
+  overflow: hidden; /* Oculta o conteúdo excedente */
+  text-overflow: ellipsis; /* Exibe reticências para texto truncado */
+`;
+
+const RenameInput = styled.input`
+  width: 100%;
+  margin-top: -10px;
+
+  font-weight: 400;
+  font-size: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;

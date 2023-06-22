@@ -8,17 +8,18 @@ import { Formik } from "formik"; //biblioteca para criar formularios em react, m
 import { Input } from "../../../shared/components/Input";
 import { SubmitButton } from "../../../shared/components/SubmitButton";
 import UserForm from "../../../shared/components/Form";
+import { useFolders } from "../../../contexts/FolderContext";
 
 export function SignInForm({ onToLogin }) {
   const { setToken, setUser } = useAuth();
   const navigate = useNavigate();
 
   const { mutate, isError, error } = useMutation(
-    (values) => api.post("/usuario/cadastro", values),
+    values => api.post("/usuario/cadastro", values),
     {
-      onSuccess: (data) => {
+      onSuccess: data => {
         setToken(data.data.token);
-        setUser(data.data.user)
+        setUser(data.data.user);
         navigate("/usuario/pastas");
       },
     }
@@ -45,7 +46,7 @@ export function SignInForm({ onToLogin }) {
           email: yup.string().required("Campo obrigatório"),
           senha: yup.string().required("Campo obrigatório"),
         })}
-        onSubmit={(values) => mutate(values)}
+        onSubmit={values => mutate(values)}
       >
         <UserForm.Inputs>
           <Input name="nome" type="text" placeholder="Nome" />

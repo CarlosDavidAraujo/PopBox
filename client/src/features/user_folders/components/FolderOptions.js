@@ -6,12 +6,24 @@ import {
   HiOutlineFolderMinus,
   HiOutlineDocumentArrowUp,
 } from "react-icons/hi2";
+import { useAddFolderMutation } from "../hooks/useAddFolderMutation";
+import { useAuth } from "../../../contexts/AuthContext";
+import { createNewFolder } from "../utils/createNewFolder";
+import { useFolders } from "../../../contexts/FolderContext";
 
 export function FolderOptions() {
+  const { user } = useAuth();
+  const { folders } = useFolders();
+  const { mutate } = useAddFolderMutation();
+  const handleFolderCreation = () => {
+    createNewFolder(user.id, folders, "nova pasta", "/nova pasta", mutate);
+  };
   return (
     <Container>
-      <IconContext.Provider value={{size: '1.5em'}}>
-        <MenuItem>{<HiOutlineFolderPlus />}Nova pasta</MenuItem>
+      <IconContext.Provider value={{ size: "1.5em" }}>
+        <MenuItem onClick={handleFolderCreation}>
+          {<HiOutlineFolderPlus />}Nova pasta
+        </MenuItem>
         <MenuItem>{<HiOutlineDocumentArrowUp />}Novo arquivo</MenuItem>
         <MenuItem>{<HiOutlineFolderArrowDown />} Baixar seleção</MenuItem>
         <MenuItem>{<HiOutlineFolderMinus />}Excluir seleção</MenuItem>

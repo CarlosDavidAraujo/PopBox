@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { UserMenu } from "./UserMenu";
-import { Logo } from "./Logo";
+import { Logo } from "./icons/Logo";
 
 export function Sidebar({ children }) {
   return (
