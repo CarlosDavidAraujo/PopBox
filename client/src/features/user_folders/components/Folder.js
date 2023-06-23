@@ -10,12 +10,13 @@ import { adjustFolderName } from "../utils/adjustFolderName";
 
 export function Folder({ folder }) {
   const { user } = useAuth();
-  const { folders, currentFolder, setCurrentFolder } = useFolders();
-  const isCurrentFolder = folder.diretorio_pai === currentFolder;
+  const { folders, currentFolderID, setCurrentFolderID, setCurrentFolderPath } =
+    useFolders();
+  const isCurrentFolder = folder.diretorio_pai === currentFolderID;
   const [inputActive, setInputActive] = useState(false);
   const [folderName, setFolderName] = useState(folder.nome);
 
-  const { mutate } = useRenameFolderMutation(folder);
+  const { mutate } = useRenameFolderMutation();
 
   const handleChange = (e) => {
     const { value } = e.target;
@@ -44,13 +45,20 @@ export function Folder({ folder }) {
     setInputActive(false);
   };
 
+  const handleOpenFolder = () => {
+    console.log(currentFolderID);
+    setCurrentFolderID(folder.id);
+    setCurrentFolderPath(folder.caminho);
+    console.log(currentFolderID);
+  };
+
   if (!isCurrentFolder) {
     return null;
   }
 
   return (
     <Container>
-      <IconContainer onDoubleClick={() => setCurrentFolder(folder.id)}>
+      <IconContainer onDoubleClick={handleOpenFolder}>
         <IconContext.Provider value={{ size: "8em", color: "var(--blue-2)" }}>
           <FcFolder />
         </IconContext.Provider>

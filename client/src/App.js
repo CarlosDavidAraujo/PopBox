@@ -1,20 +1,22 @@
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 import Routes from "./routes";
 import { AuthProvider } from "./contexts/AuthContext";
 import { FolderProvider } from "./contexts/FolderContext";
-//import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 
+const queryClient = new QueryClient();
+
 function App() {
-  const [queryClient] = useState(new QueryClient());
+  //const [queryClient] = useState(new QueryClient());
   return (
-    <QueryClientProvider client={queryClient} contextSharing={true}>
+    <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <FolderProvider>
           <Routes />
         </FolderProvider>
       </AuthProvider>
-      {/* <ReactQueryDevtools /> */}
+      <ReactQueryDevtools />
     </QueryClientProvider>
   );
 }

@@ -7,7 +7,7 @@ const { Op } = require("sequelize");
 exports.create = async (req, res) => {
   try {
     const { userID, nome, caminho, diretorio_pai } = req.body;
-
+    console.log(caminho);
     const newDirectory = await Directory.create({
       nome,
       caminho,
@@ -62,6 +62,8 @@ exports.findAll = async (req, res) => {
       },
       include: "subdirectories",
     });
+
+    console.log(directories);
     res.status(200).json(directories);
   } catch (err) {
     console.log(err);

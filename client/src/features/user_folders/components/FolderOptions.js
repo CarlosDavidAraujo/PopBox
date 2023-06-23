@@ -13,20 +13,21 @@ import { useFolders } from "../../../contexts/FolderContext";
 
 export function FolderOptions() {
   const { user } = useAuth();
-  const { folders } = useFolders();
+  const { folders, currentFolderPath, currentFolderID } = useFolders();
   const { mutate } = useAddFolderMutation();
+  console.log(currentFolderPath, currentFolderID);
 
   const handleFolderCreation = () => {
     const { adjustedName, adjustedPath } = adjustFolderName(
       folders,
-      "trabalhos",
-      "/faculdade/trabalhos"
+      "nova pasta",
+      currentFolderPath ? `${currentFolderPath}/nova pasta` : "/nova pasta"
     );
     mutate({
       userID: user.id,
       nome: adjustedName,
       caminho: adjustedPath,
-      diretorio_pai: 5,
+      diretorio_pai: currentFolderID,
     });
   };
 

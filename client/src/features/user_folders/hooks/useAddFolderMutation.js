@@ -1,13 +1,12 @@
 import { useMutation, useQueryClient } from "react-query";
 import { api } from "../../../shared/services/api";
-import { useFolders } from "../../../contexts/FolderContext";
 
 export const useAddFolderMutation = () => {
-  const { setFolders } = useFolders();
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (newFolder) => api.post("/diretorios/add", newFolder),
-    onSuccess: (data) => {
-      setFolders((prevFolders) => [...prevFolders, data.data]);
+    onSuccess: () => {
+      queryClient.invalidateQueries("folders");
     },
   });
   return mutation;
