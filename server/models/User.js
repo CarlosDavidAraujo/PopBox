@@ -38,8 +38,11 @@ Directory.belongsTo(User, { foreignKey: "proprietario" });
 User.hasMany(File, { foreignKey: "proprietario" });
 File.belongsTo(User, { foreignKey: "proprietario" });
 
-Directory.hasMany(File, { foreignKey: "diretorio_pai" });
-File.belongsTo(Directory, { foreignKey: "diretorio_pai" });
+Directory.hasMany(File, { foreignKey: "diretorio_pai", as: "files" });
+File.belongsTo(Directory, {
+  foreignKey: "diretorio_pai",
+  as: "parentDirectory",
+});
 
 Directory.hasMany(Directory, {
   as: "subdirectories",

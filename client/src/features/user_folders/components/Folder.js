@@ -1,38 +1,45 @@
 import styled from "styled-components";
 import { FcFolder } from "react-icons/fc";
-import { IconContext } from "react-icons";
 import { useState } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import { renameFolderPath } from "../utils/renameFolderPath";
 import { useFolders } from "../../../contexts/FolderContext";
 import { useRenameFolderMutation } from "../hooks/useRenameFolderMutation";
 import { adjustFolderName } from "../utils/adjustFolderName";
+import { useRef } from "react";
+import { useClickOutside } from "../../../shared/hooks/useClickOutside";
 
 export function Folder({ folder }) {
-  const { user } = useAuth();
-  const { folders, currentFolderID, setCurrentFolderID, setCurrentFolderPath } =
-    useFolders();
-  const isCurrentFolder = folder.diretorio_pai === currentFolderID;
   const [inputActive, setInputActive] = useState(false);
-  const [folderName, setFolderName] = useState(folder.nome);
+  const inputRef = useRef();
+  const folderRef = useClickOutside(() => setSelectedFolder(null));
+  const { user } = useAuth();
+  const {
+    folders,
+    currentFolderID,
+    setCurrentFolderID,
+    setCurrentFolderPath,
+    selectedFolder,
+    setSelectedFolder,
+  } = useFolders();
+  const isInCurrentFolder = folder.diretorio_pai === currentFolderID;
 
   const { mutate } = useRenameFolderMutation();
 
-  const handleChange = (e) => {
-    const { value } = e.target;
-    setFolderName(value);
-  };
-
   const handleRename = () => {
-    const renamedPath = renameFolderPath(folder.caminho, folderName);
+    const newName = inputRef.current.value;
+    const newPath = renameFolderPath(folder.caminho, newName);
 
     //verifica se o usuario realmente fez alguma alteração no nome da pasta
-    if (renamedPath !== folder.caminho) {
+    if (newPath !== folder.caminho) {
+      //ajusta o nome para nao haver repeticao
       const { adjustedName, adjustedPath } = adjustFolderName(
         folders,
-        folderName,
-        renamedPath
+        newName,
+        newPath
       );
+
+      //envia a requisição para o servidor
       mutate({
         folderID: folder.id,
         userID: user.id,
@@ -46,27 +53,31 @@ export function Folder({ folder }) {
   };
 
   const handleOpenFolder = () => {
-    console.log(currentFolderID);
     setCurrentFolderID(folder.id);
     setCurrentFolderPath(folder.caminho);
-    console.log(currentFolderID);
+    setSelectedFolder(null);
   };
 
-  if (!isCurrentFolder) {
+  const handleSelectFolder = () => {
+    setSelectedFolder(folder.id);
+  };
+
+  if (!isInCurrentFolder) {
     return null;
   }
 
   return (
-    <Container>
-      <IconContainer onDoubleClick={handleOpenFolder}>
-        <IconContext.Provider value={{ size: "8em", color: "var(--blue-2)" }}>
-          <FcFolder />
-        </IconContext.Provider>
+    <Container ref={folderRef} selected={selectedFolder === folder.id}>
+      <IconContainer
+        onClick={handleSelectFolder}
+        onDoubleClick={handleOpenFolder}
+      >
+        <FcFolder />
       </IconContainer>
       {inputActive ? (
         <RenameInput
-          value={folderName}
-          onChange={handleChange}
+          ref={inputRef}
+          value={folder.name}
           onBlur={handleRename}
           autoFocus
         />
@@ -75,19 +86,18 @@ export function Folder({ folder }) {
           {folder.nome}
         </FolderLabel>
       )}
-      {folder.subdirectories &&
-        folder.subdirectories.map((subdirectory) => (
-          <Folder key={subdirectory.id} folder={subdirectory} /> //chamada recursiva do componente
-        ))}
     </Container>
   );
 }
 
 const Container = styled.div`
-  width: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+
+  background-color: ${(props) => props.selected && "var(--bg)"};
 `;
 
 const IconContainer = styled.button`
@@ -98,19 +108,23 @@ const IconContainer = styled.button`
   justify-content: center;
 
   background-color: transparent;
+  font-size: 8rem;
+  color: var(--blue-2);
 `;
 
 const FolderLabel = styled.h4`
+  max-width: 100px;
   margin-top: -10px;
   font-weight: 400;
   font-size: 18px;
   white-space: nowrap; /* Impede quebra de linha */
   overflow: hidden; /* Oculta o conteúdo excedente */
   text-overflow: ellipsis; /* Exibe reticências para texto truncado */
+  text-align: center;
 `;
 
 const RenameInput = styled.input`
-  width: 100%;
+  max-width: 100px;
   margin-top: -10px;
 
   font-weight: 400;

@@ -50,6 +50,7 @@ const PathContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 50px;
+  padding: 14px;
   border-radius: 13px;
   background-color: var(--blue-3);
   color: white;

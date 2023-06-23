@@ -7,15 +7,15 @@ const { Op } = require("sequelize");
 exports.create = async (req, res) => {
   try {
     const { userID, nome, caminho, diretorio_pai } = req.body;
-    console.log(caminho);
+
+    createFolder(`${userID.toString()}/${caminho}`);
+
     const newDirectory = await Directory.create({
       nome,
       caminho,
       proprietario: userID,
       diretorio_pai,
     });
-
-    createFolder(`${userID.toString()}/${caminho}`);
 
     res.status(200).json(newDirectory);
   } catch (err) {
@@ -32,16 +32,14 @@ exports.rename = async (req, res) => {
 
     const directory = await Directory.findByPk(folderID);
 
+    //Renomeia primeiramente repositorio, assim se der erro ele nao executará nads no banco
+    fs.renameSync(diretorioAntigo, novoDiretorio);
+
     // Renomeia o diretório no banco
     const renamedDirectory = await directory.update({
       nome: novoNome,
       caminho: novoCaminho,
     });
-
-    //Renomeia no repositorio
-    if (renamedDirectory) {
-      fs.renameSync(diretorioAntigo, novoDiretorio);
-    }
 
     res.status(200).json(renamedDirectory);
   } catch (err) {
@@ -56,14 +54,13 @@ exports.findAll = async (req, res) => {
     const directories = await Directory.findAll({
       where: {
         proprietario: id,
-        nome: {
+        /* nome: {
           [Op.ne]: id,
-        },
+        }, */
       },
-      include: "subdirectories",
+      include: ["subdirectories", "files"],
     });
 
-    console.log(directories);
     res.status(200).json(directories);
   } catch (err) {
     console.log(err);

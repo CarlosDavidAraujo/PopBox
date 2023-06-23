@@ -1,23 +1,30 @@
 import { useContext, useState, createContext } from "react";
 import { getFolderIDBasedOnPath } from "../features/user_folders/utils/getFolderIDBasedOnPath";
+import { useAuth } from "./AuthContext";
 
 const FolderContext = createContext();
 
 export const FolderProvider = ({ children }) => {
+  const { user } = useAuth();
   const [folders, setFolders] = useState();
-  const [currentFolderID, setCurrentFolderID] = useState(null);
+  const [currentFolderID, setCurrentFolderID] = useState(user?.id);
   const [currentFolderPath, setCurrentFolderPath] = useState(null);
+  const [selectedFolder, setSelectedFolder] = useState(null);
 
   const moveOneFolderUp = () => {
-    const canMoveUP =
-      currentFolderPath && currentFolderPath.split("/").length > 1;
-    if (canMoveUP) {
-      const newPath = currentFolderPath.split("/").slice(0, -1).join("/"); //remove a ultima parte do caminho atual
-      setCurrentFolderPath(newPath);
-      // Atualiza o currentFolderID para ser o ID da pasta acima
-      const currentFolderID = getFolderIDBasedOnPath(newPath, folders);
-      setCurrentFolderID(currentFolderID);
+    const canMoveUP = currentFolderID !== user.id;
+    if (!canMoveUP) {
+      return;
     }
+    const newPath = currentFolderPath.split("/").slice(0, -1).join("/"); //remove a ultima parte do caminho atual
+    setCurrentFolderPath(newPath);
+    // Atualiza o currentFolderID para ser o ID da pasta acima
+    const newCurrentFolderID = getFolderIDBasedOnPath(
+      newPath,
+      folders,
+      user.id
+    );
+    setCurrentFolderID(newCurrentFolderID);
   };
 
   return (
@@ -29,6 +36,8 @@ export const FolderProvider = ({ children }) => {
         setCurrentFolderID,
         currentFolderPath,
         setCurrentFolderPath,
+        selectedFolder,
+        setSelectedFolder,
         moveOneFolderUp,
       }}
     >

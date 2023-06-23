@@ -4,6 +4,7 @@ import { useFolders } from "../../../contexts/FolderContext";
 import { api } from "../../../shared/services/api";
 import { useQuery } from "react-query";
 import { useAuth } from "../../../contexts/AuthContext";
+import { File } from "./File";
 
 export function UserFolderList() {
   const { user } = useAuth();
@@ -23,12 +24,18 @@ export function UserFolderList() {
   if (isError) {
     return <h2>Erro ao buscar diretorios</h2>;
   }
+
   console.log(folders);
   return (
     <Container>
       {folders?.map((folder) => (
         <Folder key={folder.id} folder={folder} />
       ))}
+      {folders
+        ?.flatMap((folder) => folder.files)
+        .map((file) => (
+          <File key={file.id} fileData={file} />
+        ))}
     </Container>
   );
 }
@@ -36,5 +43,5 @@ export function UserFolderList() {
 const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 50px;
+  gap: 30px;
 `;

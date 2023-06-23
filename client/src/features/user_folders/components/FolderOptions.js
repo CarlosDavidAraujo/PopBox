@@ -10,12 +10,17 @@ import { useAddFolderMutation } from "../hooks/useAddFolderMutation";
 import { useAuth } from "../../../contexts/AuthContext";
 import { adjustFolderName } from "../utils/adjustFolderName";
 import { useFolders } from "../../../contexts/FolderContext";
+import { useRef } from "react";
+import { useMutation, useQueryClient } from "react-query";
+import { api } from "../../../shared/services/api";
+import { normalizeFile } from "../utils/normalizeFile";
 
 export function FolderOptions() {
   const { user } = useAuth();
-  const { folders, currentFolderPath, currentFolderID } = useFolders();
   const { mutate } = useAddFolderMutation();
-  console.log(currentFolderPath, currentFolderID);
+  const fileInputRef = useRef();
+  const { folders, currentFolderPath, currentFolderID } = useFolders();
+  const queryClient = useQueryClient();
 
   const handleFolderCreation = () => {
     const { adjustedName, adjustedPath } = adjustFolderName(
@@ -31,13 +36,56 @@ export function FolderOptions() {
     });
   };
 
+  const uploadMutation = useMutation({
+    mutationFn: (formData) =>
+      api.post("/file/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: "folders" });
+    },
+  });
+
+  const handleFileUpload = () => {
+    const file = fileInputRef.current.files[0];
+    if (file) {
+      const normalizedFile = normalizeFile(file);
+      const formData = new FormData();
+      const filePath = currentFolderPath
+        ? `${currentFolderPath}/${normalizedFile.name}`
+        : `/${normalizedFile.name}`;
+      formData.append("file", normalizedFile);
+      formData.append("userID", user.id); // Substitua "userID" pelo valor correto
+      formData.append("diretorio_pai", currentFolderID); // Substitua "dirID" pelo valor correto
+      formData.append("caminho", filePath);
+      uploadMutation.mutate(formData);
+
+      // Limpa o campo de upload
+      fileInputRef.current.value = null;
+    }
+  };
+
+  /* const handleDeleteFolder = () => {
+    console.log(selectedFolder, "deletado");
+  }; */
+
   return (
     <Container>
       <IconContext.Provider value={{ size: "1.5em" }}>
         <MenuItem onClick={handleFolderCreation}>
           {<HiOutlineFolderPlus />}Nova pasta
         </MenuItem>
-        <MenuItem>{<HiOutlineDocumentArrowUp />}Novo arquivo</MenuItem>
+        <MenuItem>
+          {<HiOutlineDocumentArrowUp />}
+          Novo arquivo
+          <FileInput
+            ref={fileInputRef}
+            type="file"
+            onChange={handleFileUpload}
+          />
+        </MenuItem>
         <MenuItem>{<HiOutlineFolderArrowDown />} Baixar seleção</MenuItem>
         <MenuItem>{<HiOutlineFolderMinus />}Excluir seleção</MenuItem>
       </IconContext.Provider>
@@ -53,6 +101,7 @@ const Container = styled.div`
 `;
 
 const MenuItem = styled.button`
+  position: relative;
   height: 64px;
   border-radius: 0px 30px 30px 0px;
   padding: 9px 27px;
@@ -75,4 +124,15 @@ const MenuItem = styled.button`
     background-color: var(--blue-2);
     color: var(--bg);
   }
+`;
+
+const FileInput = styled.input`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: red;
+  opacity: 0;
+  cursor: pointer;
 `;

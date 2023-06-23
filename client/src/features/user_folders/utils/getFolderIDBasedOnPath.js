@@ -1,4 +1,4 @@
-export const getFolderIDBasedOnPath = (path, folders) => {
+export const getFolderIDBasedOnPath = (path, folders, rootFolderID) => {
   // Verifica se o caminho não está vazio
   if (path) {
     // Divide o caminho em partes separadas por "/"
@@ -13,8 +13,8 @@ export const getFolderIDBasedOnPath = (path, folders) => {
     );
 
     // Retorna o ID da pasta superior ou null se não encontrada
-    return highestFolder ? highestFolder.id : null;
+    return highestFolder ? highestFolder.id : rootFolderID;
   }
 
-  return null;
+  return rootFolderID;
 };
