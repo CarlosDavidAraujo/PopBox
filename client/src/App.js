@@ -5,10 +5,10 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { FolderProvider } from "./contexts/FolderContext";
 import { useState } from "react";
 
-const queryClient = new QueryClient();
+//const queryClient = new QueryClient();
 
 function App() {
-  //const [queryClient] = useState(new QueryClient());
+  const [queryClient] = useState(new QueryClient());
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

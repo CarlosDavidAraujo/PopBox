@@ -1,41 +1,31 @@
 import styled from "styled-components";
 import { Folder } from "./Folder";
 import { useFolders } from "../../../contexts/FolderContext";
-import { api } from "../../../shared/services/api";
-import { useQuery } from "react-query";
-import { useAuth } from "../../../contexts/AuthContext";
+import { useFoldersQuery } from "../hooks/folders/useFoldersQuery";
+import { useFilesQuery } from "../hooks/files/useFilesQuery";
 import { File } from "./File";
 
 export function UserFolderList() {
-  const { user } = useAuth();
-  const { setFolders, folders } = useFolders();
-  const { isError, isLoading } = useQuery({
-    queryKey: ["folders"],
-    queryFn: () => api.get("/diretorios/" + user.id),
-    onSuccess: (data) => {
-      setFolders(data.data);
-    },
-  });
+  const { folders, files } = useFolders();
+  const foldersQuery = useFoldersQuery();
+  const filesQuery = useFilesQuery();
 
-  if (isLoading) {
+  if (foldersQuery.isLoading || filesQuery.isLoading) {
     return <h2>Carregando...</h2>;
   }
 
-  if (isError) {
-    return <h2>Erro ao buscar diretorios</h2>;
+  if (foldersQuery.isError || filesQuery.isError) {
+    return <h2>Erro ao pastas e arquivos</h2>;
   }
 
-  console.log(folders);
   return (
     <Container>
-      {folders?.map((folder) => (
-        <Folder key={folder.id} folder={folder} />
+      {folders?.map((folder, i) => (
+        <Folder key={i} folderData={folder} />
       ))}
-      {folders
-        ?.flatMap((folder) => folder.files)
-        .map((file) => (
-          <File key={file.id} fileData={file} />
-        ))}
+      {files.map((file) => (
+        <File key={file.id} fileData={file} />
+      ))}
     </Container>
   );
 }

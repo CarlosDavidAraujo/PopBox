@@ -1,8 +1,9 @@
 const { jwtSecret } = require("../config/auth");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
-const createFolder = require("../utils/createFolder");
+const fs = require("fs");
 const Directory = require("../models/Directory");
+const { basePath } = require("../utils/basePath");
 
 //--------------------- CADASTRO DE USUARIO -------------------------//
 
@@ -27,17 +28,19 @@ exports.create = async (req, res) => {
       administrador: false,
     });
 
-    //cria a primeira pasta do usuario que sera a raiz de seu repositorio, a pasta raiz é nomeada automaticamente com o ID do usuario
+    fs.mkdirSync(`${basePath}/${user.uuid}`);
+
+    //cria a primeira pasta do usuario que sera a raiz de seu repositorio, a pasta raiz é nomeada automaticamente com o uuid do usuario
     const rootFolder = await user.createDirectory({
-      nome: user.id,
-      caminho: user.id.toString(),
+      nome: user.uuid,
+      caminho: `/${user.uuid}`,
     });
+
     if (!rootFolder) {
       return res.status(500).json({
         error: "Erro ao cadastrar usuário, tente mais tarde!",
       });
     }
-    createFolder(user.id.toString());
 
     //envio de dados do usuario para o front-end
     const { senha: password, ...userWithoutPassword } = user.dataValues;

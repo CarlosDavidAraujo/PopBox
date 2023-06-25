@@ -1,103 +1,40 @@
 import styled from "styled-components";
 import { FcFolder } from "react-icons/fc";
-import { useState } from "react";
-import { useAuth } from "../../../contexts/AuthContext";
-import { renameFolderPath } from "../utils/renameFolderPath";
 import { useFolders } from "../../../contexts/FolderContext";
-import { useRenameFolderMutation } from "../hooks/useRenameFolderMutation";
-import { adjustFolderName } from "../utils/adjustFolderName";
-import { useRef } from "react";
-import { useClickOutside } from "../../../shared/hooks/useClickOutside";
+import { FolderDropdown } from "./folder-dropdown-menu/FolderDropdown";
 
-export function Folder({ folder }) {
-  const [inputActive, setInputActive] = useState(false);
-  const inputRef = useRef();
-  const folderRef = useClickOutside(() => setSelectedFolder(null));
-  const { user } = useAuth();
-  const {
-    folders,
-    currentFolderID,
-    setCurrentFolderID,
-    setCurrentFolderPath,
-    selectedFolder,
-    setSelectedFolder,
-  } = useFolders();
-  const isInCurrentFolder = folder.diretorio_pai === currentFolderID;
+export function Folder({ folderData }) {
+  const { currentParentFolder, setCurrentParentFolder } = useFolders();
 
-  const { mutate } = useRenameFolderMutation();
-
-  const handleRename = () => {
-    const newName = inputRef.current.value;
-    const newPath = renameFolderPath(folder.caminho, newName);
-
-    //verifica se o usuario realmente fez alguma alteração no nome da pasta
-    if (newPath !== folder.caminho) {
-      //ajusta o nome para nao haver repeticao
-      const { adjustedName, adjustedPath } = adjustFolderName(
-        folders,
-        newName,
-        newPath
-      );
-
-      //envia a requisição para o servidor
-      mutate({
-        folderID: folder.id,
-        userID: user.id,
-        caminho: folder.caminho,
-        novoCaminho: adjustedPath,
-        novoNome: adjustedName,
-      });
-    }
-
-    setInputActive(false);
-  };
+  const belongsToCurrentParentFolder =
+    folderData.diretorio_pai === currentParentFolder?.id;
 
   const handleOpenFolder = () => {
-    setCurrentFolderID(folder.id);
-    setCurrentFolderPath(folder.caminho);
-    setSelectedFolder(null);
+    setCurrentParentFolder(folderData.id);
   };
 
-  const handleSelectFolder = () => {
-    setSelectedFolder(folder.id);
-  };
-
-  if (!isInCurrentFolder) {
+  if (!belongsToCurrentParentFolder) {
     return null;
   }
 
   return (
-    <Container ref={folderRef} selected={selectedFolder === folder.id}>
-      <IconContainer
-        onClick={handleSelectFolder}
-        onDoubleClick={handleOpenFolder}
-      >
+    <Container>
+      <FolderDropdown folderData={folderData} />
+      <IconContainer onDoubleClick={handleOpenFolder}>
         <FcFolder />
       </IconContainer>
-      {inputActive ? (
-        <RenameInput
-          ref={inputRef}
-          value={folder.name}
-          onBlur={handleRename}
-          autoFocus
-        />
-      ) : (
-        <FolderLabel onDoubleClick={() => setInputActive(true)}>
-          {folder.nome}
-        </FolderLabel>
-      )}
+      <FolderLabel>{folderData.nome}</FolderLabel>
     </Container>
   );
 }
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-
-  background-color: ${(props) => props.selected && "var(--bg)"};
 `;
 
 const IconContainer = styled.button`
@@ -113,7 +50,7 @@ const IconContainer = styled.button`
 `;
 
 const FolderLabel = styled.h4`
-  max-width: 100px;
+  max-width: 150x;
   margin-top: -10px;
   font-weight: 400;
   font-size: 18px;
@@ -121,15 +58,4 @@ const FolderLabel = styled.h4`
   overflow: hidden; /* Oculta o conteúdo excedente */
   text-overflow: ellipsis; /* Exibe reticências para texto truncado */
   text-align: center;
-`;
-
-const RenameInput = styled.input`
-  max-width: 100px;
-  margin-top: -10px;
-
-  font-weight: 400;
-  font-size: 18px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;

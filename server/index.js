@@ -18,7 +18,7 @@ app.use(express.json());
 
 app.use("/usuario", userRouter);
 app.use("/diretorios", directoryRouter);
-app.use("/file", upload.single("file"), fileRouter);
+app.use("/arquivos", upload.single("file"), fileRouter);
 
 /* app.get("/", function (req, res) {
   res.send("Hello World!");

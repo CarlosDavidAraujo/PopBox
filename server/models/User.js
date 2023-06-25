@@ -9,6 +9,10 @@ const User = sequelize.define("User", {
     autoIncrement: true,
     primaryKey: true,
   },
+  uuid: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+  },
   nome: {
     type: DataTypes.STRING,
     allowNull: false,

@@ -1,13 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
+import { useFolders } from "../../contexts/FolderContext";
 
 export function UserMenu() {
   const navigate = useNavigate();
   const { user, setToken } = useAuth();
+  const { resetFolderContext } = useFolders();
 
   const handleLogout = () => {
     setToken(null);
+    resetFolderContext();
     navigate("/");
   };
 

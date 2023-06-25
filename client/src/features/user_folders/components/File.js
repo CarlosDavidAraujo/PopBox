@@ -1,15 +1,18 @@
 import styled from "styled-components";
 import { useFolders } from "../../../contexts/FolderContext";
 import { AiFillFileUnknown } from "react-icons/ai";
+import { FileDropdown } from "./file-dropdown-menu/FileDropdown";
 
 export function File({ fileData }) {
-  const { currentFolderID } = useFolders();
-  const isInCurrentFolder = fileData.diretorio_pai === currentFolderID;
-  if (!isInCurrentFolder) {
+  const { currentParentFolder } = useFolders();
+  const belongsToCurrentParentFolder =
+    fileData.diretorio_pai === currentParentFolder?.id;
+  if (!belongsToCurrentParentFolder) {
     return null;
   }
   return (
     <Container>
+      <FileDropdown fileData={fileData} />
       <IconContainer>
         <AiFillFileUnknown />
       </IconContainer>
@@ -19,6 +22,7 @@ export function File({ fileData }) {
 }
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -40,7 +44,7 @@ const IconContainer = styled.button`
 `;
 
 const FileLabel = styled.h4`
-  max-width: 100px;
+  max-width: 150px;
   font-weight: 400;
   font-size: 18px;
   white-space: nowrap; /* Impede quebra de linha */

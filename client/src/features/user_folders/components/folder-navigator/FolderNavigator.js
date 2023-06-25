@@ -1,18 +1,15 @@
 import styled from "styled-components";
 import { VscTriangleUp } from "react-icons/vsc";
-import { useFolders } from "../../../contexts/FolderContext";
+import { useNavigator } from "./useNavigator";
 
 export function FolderNavigator() {
-  const { currentFolderPath, moveOneFolderUp } = useFolders();
-
+  const { path, moveOneFolderUp } = useNavigator();
   return (
     <Container>
       <UpButton onClick={moveOneFolderUp}>
         <VscTriangleUp />
       </UpButton>
-      <PathContainer>
-        {currentFolderPath ? `${currentFolderPath}` : "/"}
-      </PathContainer>
+      <PathContainer>{path}</PathContainer>
     </Container>
   );
 }

@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "react-query";
-import { api } from "../../../shared/services/api";
+import { api } from "../../../../shared/services/api";
 
-export const useAddFolderMutation = () => {
+export function useRenameFolderMutation() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (newFolder) => api.post("/diretorios/add", newFolder),
+    mutationFn: (body) => api.post("/diretorios/rename", body),
     onSuccess: () => {
       queryClient.invalidateQueries("folders");
     },
   });
   return mutation;
-};
+}

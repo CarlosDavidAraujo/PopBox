@@ -1,19 +1,19 @@
 const Directory = require("../models/Directory");
+const User = require("../models/User");
 const fs = require("fs");
-const createFolder = require("../utils/createFolder");
 const { basePath } = require("../utils/basePath");
-const { Op } = require("sequelize");
 
 exports.create = async (req, res) => {
   try {
     const { userID, nome, caminho, diretorio_pai } = req.body;
 
-    createFolder(`${userID.toString()}/${caminho}`);
+    const user = await User.findByPk(userID);
 
-    const newDirectory = await Directory.create({
+    fs.mkdirSync(`${basePath}${caminho}`);
+
+    const newDirectory = await user.createDirectory({
       nome,
       caminho,
-      proprietario: userID,
       diretorio_pai,
     });
 
@@ -26,9 +26,9 @@ exports.create = async (req, res) => {
 
 exports.rename = async (req, res) => {
   try {
-    const { userID, folderID, caminho, novoCaminho, novoNome } = req.body;
-    const diretorioAntigo = `${basePath}/${userID}${caminho}`;
-    const novoDiretorio = `${basePath}/${userID}${novoCaminho}`;
+    const { folderID, caminho, novoCaminho, novoNome } = req.body;
+    const diretorioAntigo = basePath + caminho;
+    const novoDiretorio = basePath + novoCaminho;
 
     const directory = await Directory.findByPk(folderID);
 
@@ -48,17 +48,32 @@ exports.rename = async (req, res) => {
   }
 };
 
+exports.delete = async (req, res) => {
+  try {
+    const { id, caminho } = req.query;
+
+    fs.rmdirSync(`${basePath}${caminho}`);
+    await Directory.destroy({
+      where: {
+        id,
+      },
+    });
+    res.status(200).json("pasta removida");
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json("Houve um erro ao excluir a pasta. Verifique se ela está vazia!");
+  }
+};
+
 exports.findAll = async (req, res) => {
   try {
     const { id } = req.params;
     const directories = await Directory.findAll({
       where: {
         proprietario: id,
-        /* nome: {
-          [Op.ne]: id,
-        }, */
       },
-      include: ["subdirectories", "files"],
     });
 
     res.status(200).json(directories);
