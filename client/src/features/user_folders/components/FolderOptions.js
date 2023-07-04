@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { AddFolderModal } from "./folder-modals/AddFolderModal";
 import { useToggle } from "../../../shared/hooks/useToggle";
 import { useFileOptions } from "../hooks/files/useFileOptions";
+import { UserQuota } from "./UserQuota";
 
 export function FolderOptions() {
   const fileInputRef = useRef();
@@ -31,6 +32,7 @@ export function FolderOptions() {
           />
         </MenuItem>
       </IconContext.Provider>
+      <UserQuota />
       <AddFolderModal
         isOpen={isAddFolderModalOpen}
         onClose={closeAddFolderModal}

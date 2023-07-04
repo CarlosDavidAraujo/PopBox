@@ -14,7 +14,7 @@ export function SignInForm({ onToLogin }) {
   const navigate = useNavigate();
 
   const { mutate, isError, error } = useMutation(
-    (values) => api.post("/usuario/cadastro", values),
+    (values) => api.post("/usuarios/cadastro", values),
     {
       onSuccess: (data) => {
         setToken(data.data.token);

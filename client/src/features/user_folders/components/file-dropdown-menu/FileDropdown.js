@@ -10,6 +10,7 @@ import { useToggle } from "../../../../shared/hooks/useToggle";
 import { useFolders } from "../../../../contexts/FolderContext";
 import { DeleteFileModal } from "../file-modals/DeleteFileModal";
 import { RenameFileModal } from "../file-modals/RenameFileModal";
+import { useFileOptions } from "../../hooks/files/useFileOptions";
 
 export const FileDropdown = ({ fileData }) => {
   const { setSelectedFile } = useFolders();
@@ -28,6 +29,7 @@ export const FileDropdown = ({ fileData }) => {
     setOn: openDeleteModal,
     setOff: closeDeleteModal,
   } = useToggle();
+  const { handleFileDownload } = useFileOptions();
   const dropdownRef = useClickOutside(closeDropdown);
 
   const handleDropdownToggle = () => {
@@ -47,7 +49,7 @@ export const FileDropdown = ({ fileData }) => {
               <MdDriveFileRenameOutline />
               Renomear
             </DropdownButton>
-            <DropdownButton>
+            <DropdownButton onClick={handleFileDownload}>
               <MdDownload />
               Baixar
             </DropdownButton>

@@ -1,14 +1,14 @@
 import { useAuth } from "../../../../contexts/AuthContext";
 import { useFolders } from "../../../../contexts/FolderContext";
+import { appendFileExtension } from "../../utils/appendFileExtension";
 import { generateUniqueFileName } from "../../utils/generateUniqueName";
-import { normalizeFile } from "../../utils/normalizeFile";
 import { useDeleteFileMutation } from "./useDeleteFileMutation";
 import { useRenameFileMutation } from "./useRenameFileMutation";
 import { useUploadFileMutation } from "./useUploadFileMutation";
 
 export const useFileOptions = () => {
   const { user } = useAuth();
-  const { folders, files, currentParentFolder, selectedFile } = useFolders();
+  const { files, currentParentFolder, selectedFile } = useFolders();
   const uploadMutation = useUploadFileMutation();
   const deleteMutation = useDeleteFileMutation();
   const renameMutation = useRenameFileMutation();
@@ -17,11 +17,14 @@ export const useFileOptions = () => {
     const file = fileRef.current.files[0];
 
     if (file) {
-      const { normalizedFile, uniquePath } = normalizeFile(
-        file,
+      const { uniqueName, uniquePath } = generateUniqueFileName(
+        file.name,
         currentParentFolder.caminho,
-        folders
+        files
       );
+      const normalizedFile = new File([file], uniqueName, {
+        type: file.type,
+      });
       const formData = new FormData();
       formData.append("file", normalizedFile);
       formData.append("userID", user.id);
@@ -42,9 +45,13 @@ export const useFileOptions = () => {
   };
 
   const handleFileRename = (newName) => {
-    const { uniqueName, uniquePath } = generateUniqueFileName(
-      newName,
+    const newNameWithExtension = appendFileExtension(
       selectedFile.mime_type,
+      newName
+    );
+
+    const { uniqueName, uniquePath } = generateUniqueFileName(
+      newNameWithExtension,
       currentParentFolder.caminho,
       files
     );
@@ -56,6 +63,23 @@ export const useFileOptions = () => {
       novoNome: uniqueName,
     });
   };
+  const handleFileDownload = async () => {
+    const response = await fetch(
+      `http://localhost:3002/arquivos/download?caminho=${selectedFile.caminho}`
+    );
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = selectedFile.nome; // Define o nome do arquivo no momento do download
+    link.click();
+    window.URL.revokeObjectURL(url);
+  };
 
-  return { handleFileUpload, handleFileDelete, handleFileRename };
+  return {
+    handleFileUpload,
+    handleFileDelete,
+    handleFileRename,
+    handleFileDownload,
+  };
 };

@@ -1,21 +1,22 @@
 import styled from "styled-components";
-import { useFolders } from "../../../contexts/FolderContext";
+import { useFolders } from "../../../../contexts/FolderContext";
 import { AiFillFileUnknown } from "react-icons/ai";
-import { FileDropdown } from "./file-dropdown-menu/FileDropdown";
+import { FileDropdown } from "../file-dropdown-menu/FileDropdown";
+import { useFileIcons } from "./useFileIcons";
 
 export function File({ fileData }) {
   const { currentParentFolder } = useFolders();
+  const icon = useFileIcons(fileData.mime_type);
   const belongsToCurrentParentFolder =
     fileData.diretorio_pai === currentParentFolder?.id;
   if (!belongsToCurrentParentFolder) {
     return null;
   }
+
   return (
     <Container>
       <FileDropdown fileData={fileData} />
-      <IconContainer>
-        <AiFillFileUnknown />
-      </IconContainer>
+      <IconContainer>{icon}</IconContainer>
       <FileLabel>{fileData.nome}</FileLabel>
     </Container>
   );

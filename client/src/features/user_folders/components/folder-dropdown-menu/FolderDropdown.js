@@ -47,10 +47,6 @@ export const FolderDropdown = ({ folderData }) => {
               <MdDriveFileRenameOutline />
               Renomear
             </DropdownButton>
-            <DropdownButton>
-              <MdDownload />
-              Baixar
-            </DropdownButton>
             <DropdownButton onClick={openDeleteModal}>
               <MdDelete />
               Deletar

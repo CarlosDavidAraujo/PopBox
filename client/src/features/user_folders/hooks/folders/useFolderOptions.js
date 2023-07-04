@@ -13,7 +13,6 @@ export const useFolderOptions = () => {
   const deleteMutation = useDeleteFolderMutation();
 
   const handleFolderCreation = (folderName) => {
-    console.log(currentParentFolder);
     const { uniqueName, uniquePath } = generateUniqueFolderName(
       folders,
       folderName,

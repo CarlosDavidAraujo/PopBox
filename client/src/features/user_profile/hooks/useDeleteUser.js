@@ -4,7 +4,7 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { useNavigation } from "react-router-dom";
 
 const fetchDelete = (id, credentials) => {
-  const res = api.delete(`/usuario/delete/${id}`, { data: credentials });
+  const res = api.delete(`/usuarios/delete/${id}`, { data: credentials });
   console.log(res);
   return res;
 };
@@ -16,7 +16,7 @@ export function useDeleteUser() {
     (credentials) => fetchDelete(user.id, credentials),
     {
       onSuccess: () => {
-        console.log('sucesso');
+        console.log("sucesso");
         setToken(null);
         setUser(null);
         navigate("/");

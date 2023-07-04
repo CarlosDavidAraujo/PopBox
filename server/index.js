@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use("/usuario", userRouter);
+app.use("/usuarios", userRouter);
 app.use("/diretorios", directoryRouter);
 app.use("/arquivos", upload.single("file"), fileRouter);
 

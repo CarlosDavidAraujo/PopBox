@@ -1,5 +1,6 @@
 import { useContext, useState, createContext, useMemo, useEffect } from "react";
 import { useAuth } from "./AuthContext";
+import { bytesToMegabytes } from "../features/user_folders/utils/bytesToMegabytes";
 
 const FolderContext = createContext();
 
@@ -10,6 +11,14 @@ export const FolderProvider = ({ children }) => {
   const [selectedFolder, _setSelectedFolder] = useState(null);
   const [files, setFiles] = useState([]);
   const [selectedFile, _setSelectedFile] = useState(null);
+
+  const getUsedQuota = () => {
+    const sumSize = files.reduce((sum, file) => {
+      return sum + file.tamanho;
+    }, 0);
+    const quota = bytesToMegabytes(sumSize);
+    return quota;
+  };
 
   const setCurrentParentFolder = (folderID) => {
     const parent = folders.find((folder) => folder.id === folderID);
@@ -67,6 +76,7 @@ export const FolderProvider = ({ children }) => {
       setSelectedFolder,
       moveOneFolderUp,
       resetFolderContext,
+      getUsedQuota,
     }),
     [folders, files, selectedFile, currentParentFolder, selectedFolder]
   );

@@ -24,6 +24,6 @@ sequelize
 async function syncDatabase() {
   await sequelize.sync({ force: true });
 }
-//syncDatabase();
+//syncDatabase(); //reseta o banco
 
 module.exports = sequelize;

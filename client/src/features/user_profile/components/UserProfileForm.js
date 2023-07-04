@@ -12,12 +12,11 @@ import UserForm from "../../../shared/components/Form";
 import { SubmitButton } from "../../../shared/components/SubmitButton";
 import { UserDeleteModal } from "./UserDeleteModal";
 
-
 export function UserProfileForm() {
   const [modalVisible, setModalVisible] = useState(false);
   const { user, setUser } = useAuth();
   const { mutate, isError, error, isSuccess } = useMutation(
-    (values) => api.put("/usuario/update", values),
+    (values) => api.put("/usuarios/update", values),
     {
       onSuccess: (data) => {
         setUser(data.data.user);
@@ -73,10 +72,15 @@ export function UserProfileForm() {
             autoComplete="off"
           />
           <SubmitButton type="submit">Atualizar</SubmitButton>
-          <SubmitButton color="var(--danger)" onClick={()=> setModalVisible(true)}>Excluir conta</SubmitButton>
+          <SubmitButton
+            color="var(--danger)"
+            onClick={() => setModalVisible(true)}
+          >
+            Excluir conta
+          </SubmitButton>
         </Inputs>
       </Formik>
-      {modalVisible && <UserDeleteModal setVisible={setModalVisible}/>}
+      {modalVisible && <UserDeleteModal setVisible={setModalVisible} />}
     </Container>
   );
 }

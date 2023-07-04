@@ -12,20 +12,14 @@ module.exports.create = async (req, res) => {
 
     // Cria o arquivo no repositorio
     const path = basePath + caminho;
-    fs.writeFile(path, file.buffer, async (err) => {
-      if (err) {
-        console.log("Erro ao gravar arquivo", err);
-      } else {
-        //cadastra o arquivo no banco
-        await user.createFile({
-          nome: file.originalname,
-          mime_type: file.mimetype,
-          tamanho: file.size,
-          caminho,
-          diretorio_pai,
-        });
-        console.log("Arquivo adicionado com sucesso");
-      }
+    fs.writeFileSync(path, file.buffer);
+
+    await user.createFile({
+      nome: file.originalname,
+      mime_type: file.mimetype,
+      tamanho: file.size,
+      caminho,
+      diretorio_pai,
     });
 
     res.status(200).json("Arquivo adicionado");
@@ -86,8 +80,27 @@ exports.rename = async (req, res) => {
       nome: novoNome,
       caminho: novoCaminho,
     });
+    res.status(200).json("arquivo renomeado com sucesso");
   } catch (err) {
     console.log("Erro ao renomear arquivo", err);
     res.status(500).json("Erro ao renomear arquivo");
+  }
+};
+
+exports.download = async (req, res) => {
+  try {
+    const { caminho } = req.query;
+
+    const filePath = `${basePath}${caminho}`;
+
+    // Verifica se o arquivo existe antes de fazer o download
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ erro: "Arquivo não encontrado" });
+    }
+    console.log(filePath);
+    res.download(filePath); // Envia o arquivo para download
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Houve um erro ao baixar o arquivo");
   }
 };

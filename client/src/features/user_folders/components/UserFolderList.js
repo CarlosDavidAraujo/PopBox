@@ -3,10 +3,10 @@ import { Folder } from "./Folder";
 import { useFolders } from "../../../contexts/FolderContext";
 import { useFoldersQuery } from "../hooks/folders/useFoldersQuery";
 import { useFilesQuery } from "../hooks/files/useFilesQuery";
-import { File } from "./File";
+import { File } from "./file/File";
 
 export function UserFolderList() {
-  const { folders, files } = useFolders();
+  const { folders, files, getUserQuota } = useFolders();
   const foldersQuery = useFoldersQuery();
   const filesQuery = useFilesQuery();
 

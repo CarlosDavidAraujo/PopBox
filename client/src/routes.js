@@ -8,6 +8,7 @@ import { LoginPage } from "./features/signIn_login/containers/LoginPage";
 import { UserFoldersPage } from "./features/user_folders/containers/UserFoldersPage";
 import { UserProfilePage } from "./features/user_profile/containers/UserProfilePage";
 import { useAuth } from "./contexts/AuthContext";
+import { AdminPage } from "./features/admin/AdminPage";
 
 const ProtectedByAuthenticationRoutes = () => {
   const { token } = useAuth();
@@ -33,6 +34,7 @@ const Routes = () => {
       children: [
         { path: "/usuario/pastas", element: <UserFoldersPage /> },
         { path: "/usuario/perfil", element: <UserProfilePage /> },
+        { path: "/usuario/admin", element: <AdminPage /> },
       ],
     },
   ];

@@ -7,5 +7,6 @@ router.post("/upload", fileControllers.create);
 router.get("/", fileControllers.findAll);
 router.delete("/delete", fileControllers.delete);
 router.put("/rename", fileControllers.rename);
+router.get("/download", fileControllers.download);
 
 module.exports = router;

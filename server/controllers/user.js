@@ -132,3 +132,13 @@ exports.delete = async (req, res) => {
     console.log(err);
   }
 };
+
+exports.getAll = async (req, res) => {
+  try {
+    const users = await User.findAll();
+    res.status(200).json(users);
+  } catch (err) {
+    console.log("Erro ao buscar usuarios:", err);
+    res.status(500).json("Erro ao buscar usuários");
+  }
+};
