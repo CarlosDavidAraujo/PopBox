@@ -47,6 +47,7 @@ O PopBox oferece as seguintes funcionalidades:
 1. Crie um banco de dados MySQL para o projeto.
 
 2. Abra o arquivo `server/config/db.js` e atualize as informações de conexão com o banco de dados:
+3. Crie uma pasta chamada `repo` dentro da pasta `server`
 
 ### Executando o Backend
 
