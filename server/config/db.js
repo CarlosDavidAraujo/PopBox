@@ -1,4 +1,4 @@
-const { Sequelize } = require("sequelize");
+const { Sequelize } = require("sequelize")
 
 // Configurações de conexão com o banco de dados
 const sequelize = new Sequelize(
@@ -9,21 +9,21 @@ const sequelize = new Sequelize(
     host: "localhost",
     dialect: "mysql",
   }
-);
+)
 
 // Testar a conexão com o banco de dados
 sequelize
   .authenticate()
   .then(() => {
-    console.log("Conexão com o banco de dados estabelecida com sucesso.");
+    console.log("Conexão com o banco de dados estabelecida com sucesso.")
   })
   .catch((error) => {
-    console.error("Erro ao conectar-se ao banco de dados:", error);
-  });
+    console.error("Erro ao conectar-se ao banco de dados:", error)
+  })
 
 async function syncDatabase() {
-  await sequelize.sync({ force: true });
+  await sequelize.sync({ force: true })
 }
-//syncDatabase(); //reseta o banco
+//syncDatabase() //reseta o banco
 
-module.exports = sequelize;
+module.exports = sequelize

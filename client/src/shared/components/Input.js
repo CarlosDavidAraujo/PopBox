@@ -1,19 +1,20 @@
-import { ErrorMessage, Field } from "formik";
-import styled from "styled-components";
+import { ErrorMessage, Field } from "formik"
+import styled from "styled-components"
 
-export function Input({ ...props }) {
+export function Input({ label, ...props }) {
   return (
-    <Container>
+    <Container {...props}>
+      {label && <label htmlFor={props.name}>{label}</label>}
       <StyledField {...props} />
       <ErrorMessage {...props} />
     </Container>
-  );
+  )
 }
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-`;
+`
 
 const StyledField = styled(Field)`
   width: 100%;
@@ -30,4 +31,4 @@ const StyledField = styled(Field)`
   ::placeholder {
     color: var(--text-placeholder);
   }
-`;
+`

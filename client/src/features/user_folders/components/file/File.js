@@ -1,16 +1,15 @@
-import styled from "styled-components";
-import { useFolders } from "../../../../contexts/FolderContext";
-import { AiFillFileUnknown } from "react-icons/ai";
-import { FileDropdown } from "../file-dropdown-menu/FileDropdown";
-import { useFileIcons } from "./useFileIcons";
+import styled from "styled-components"
+import { useFolders } from "../../../../contexts/FolderContext"
+import { FileDropdown } from "../file-dropdown-menu/FileDropdown"
+import { useFileIcons } from "./useFileIcons"
 
 export function File({ fileData }) {
-  const { currentParentFolder } = useFolders();
-  const icon = useFileIcons(fileData.mime_type);
+  const { currentParentFolder } = useFolders()
+  const icon = useFileIcons(fileData.mime_type)
   const belongsToCurrentParentFolder =
-    fileData.diretorio_pai === currentParentFolder?.id;
+    fileData.diretorio_pai === currentParentFolder?.id
   if (!belongsToCurrentParentFolder) {
-    return null;
+    return null
   }
 
   return (
@@ -19,7 +18,7 @@ export function File({ fileData }) {
       <IconContainer>{icon}</IconContainer>
       <FileLabel>{fileData.nome}</FileLabel>
     </Container>
-  );
+  )
 }
 
 const Container = styled.div`
@@ -31,7 +30,7 @@ const Container = styled.div`
   border-radius: 10px;
 
   background-color: ${(props) => props.selected && "var(--bg)"};
-`;
+`
 
 const IconContainer = styled.button`
   border: none;
@@ -42,7 +41,7 @@ const IconContainer = styled.button`
   background-color: transparent;
   font-size: 7rem;
   color: var(--blue-2);
-`;
+`
 
 const FileLabel = styled.h4`
   max-width: 150px;
@@ -51,4 +50,4 @@ const FileLabel = styled.h4`
   white-space: nowrap; /* Impede quebra de linha */
   overflow: hidden; /* Oculta o conteúdo excedente */
   text-overflow: ellipsis; /* Exibe reticências para texto truncado */
-`;
+`

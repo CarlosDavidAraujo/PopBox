@@ -1,17 +1,16 @@
-import styled from "styled-components";
-import { useUsersStore } from "../../../stores/useUsersStore";
-import { useUsersQuery } from "../hooks/useUsersQuery";
+import styled from "styled-components"
+import { useUsersQuery } from "../hooks/useUsersQuery"
+import { AdminActions } from "./AdminActions"
 
 export function UsersList() {
-  //const setUsers = useUsersStore((state) => state.setUsers);
-  const { data, isError, isLoading } = useUsersQuery();
+  const { data, isError, isLoading } = useUsersQuery()
 
   if (isLoading) {
-    return <p>Carregando...</p>;
+    return <p>Carregando...</p>
   }
 
   if (isError) {
-    return <p>Houve um erro ao carrgar a lista de usuários</p>;
+    return <p>Houve um erro ao carrgar a lista de usuários</p>
   }
 
   return (
@@ -19,43 +18,64 @@ export function UsersList() {
       <Table>
         <thead>
           <TableRow>
-            <th>#</th>
-            <th>Email</th>
-            <th>Senha</th>
-            <th>Cota</th>
-            <th>Ações</th>
+            <TableHead>#</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Senha</TableHead>
+            <TableHead>Cota</TableHead>
+            <TableHead>Ações</TableHead>
           </TableRow>
         </thead>
-        <tbody>
-          {data.data.map((user) => (
-            <TableRow>
-              <TableData>{user.id}</TableData>
-              <TableData>{user.email}</TableData>
-              <TableData>{user.senha}</TableData>
-              <TableData>{user.cota}</TableData>
-            </TableRow>
-          ))}
-        </tbody>
+        <TableBody>
+          {data.data.map(
+            (user) =>
+              !user.administrador && (
+                <TableRow>
+                  <TableData>{user.id}</TableData>
+                  <TableData>{user.email}</TableData>
+                  <TableData>{user.senha}</TableData>
+                  <TableData>{user.cota} Mb</TableData>
+                  <TableData>
+                    <AdminActions user={user} />
+                  </TableData>
+                </TableRow>
+              )
+          )}
+        </TableBody>
       </Table>
     </Container>
-  );
+  )
 }
 
 const Container = styled.div`
   width: max-content;
-`;
+  border: 1px solid lightgray;
+  border-radius: 0.5rem;
+  overflow: hidden;
+`
 
 const Table = styled.table`
-  border: 1px solid lightgray;
   border-collapse: collapse;
-  border-radius: 5px;
-`;
+  // width: 100%;
+`
+
+const TableBody = styled.tbody`
+  > tr:nth-last-child(1) {
+    border: none;
+  }
+`
 
 const TableRow = styled.tr`
-  padding: 5px;
   border-bottom: 1px solid lightgray;
-`;
+  background-color: white;
+`
+
+const TableHead = styled.th`
+  padding: 10px;
+  background-color: var(--blue-2);
+  color: white;
+  text-align: start;
+`
 
 const TableData = styled.td`
-  padding: 5px;
-`;
+  padding: 10px;
+`

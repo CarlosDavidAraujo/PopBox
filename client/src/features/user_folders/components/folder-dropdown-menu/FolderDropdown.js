@@ -1,39 +1,39 @@
-import styled from "styled-components";
+import styled from "styled-components"
 import {
   MdMoreVert,
   MdDriveFileRenameOutline,
   MdDelete,
   MdDownload,
-} from "react-icons/md";
-import { useClickOutside } from "../../../../shared/hooks/useClickOutside";
-import { useToggle } from "../../../../shared/hooks/useToggle";
-import { RenameModal } from "../folder-modals/RenameModal";
-import { useFolders } from "../../../../contexts/FolderContext";
-import { DeleteModal } from "../folder-modals/DeleteModal";
+} from "react-icons/md"
+import { useClickOutside } from "../../../../shared/hooks/useClickOutside"
+import { useToggle } from "../../../../shared/hooks/useToggle"
+import { RenameModal } from "../folder-modals/RenameModal"
+import { useFolders } from "../../../../contexts/FolderContext"
+import { DeleteModal } from "../folder-modals/DeleteModal"
 
 export const FolderDropdown = ({ folderData }) => {
-  const { setSelectedFolder } = useFolders();
+  const { setSelectedFolder } = useFolders()
   const {
     state: isDropdownOpen,
     setOff: closeDropdown,
     toggle: toggleDropdown,
-  } = useToggle();
+  } = useToggle()
   const {
     state: isRenameModalOpen,
     setOn: openRenameModal,
     setOff: closeRenameModal,
-  } = useToggle();
+  } = useToggle()
   const {
     state: isDeleteModalOpen,
     setOn: openDeleteModal,
     setOff: closeDeleteModal,
-  } = useToggle();
-  const dropdownRef = useClickOutside(closeDropdown);
+  } = useToggle()
+  const dropdownRef = useClickOutside(closeDropdown)
 
   const handleDropdownToggle = () => {
-    toggleDropdown();
-    setSelectedFolder(folderData.id);
-  };
+    toggleDropdown()
+    setSelectedFolder(folderData.id)
+  }
 
   return (
     <>
@@ -57,15 +57,15 @@ export const FolderDropdown = ({ folderData }) => {
       <DeleteModal isOpen={isDeleteModalOpen} onClose={closeDeleteModal} />
       <RenameModal isOpen={isRenameModalOpen} onClose={closeRenameModal} />
     </>
-  );
-};
+  )
+}
 
 const Container = styled.div`
   position: absolute;
   top: 0;
   right: 0;
   z-index: 1000;
-`;
+`
 
 const DropdownMenuButton = styled.button`
   position: relative;
@@ -82,7 +82,7 @@ const DropdownMenuButton = styled.button`
   &:hover {
     background-color: var(--bg);
   }
-`;
+`
 
 const DropdownContent = styled.div`
   position: absolute;
@@ -91,7 +91,7 @@ const DropdownContent = styled.div`
   padding: 5px;
   box-shadow: var(--shadow);
   background-color: var(--bg);
-`;
+`
 
 const DropdownButton = styled.button`
   display: flex;
@@ -110,4 +110,4 @@ const DropdownButton = styled.button`
     background-color: var(--blue-2);
     color: white;
   }
-`;
+`

@@ -1,31 +1,45 @@
 import styled from "styled-components"
-import { Modal } from "../../../../shared/components/modals/Modal"
-import { Button } from "../../../../shared/components/buttons/Button"
 import { useRef } from "react"
-import { useFileOptions } from "../../hooks/files/useFileOptions"
+import { Modal } from "../../../shared/components/modals/Modal"
+import { Button } from "../../../shared/components/buttons/Button"
+import { useAdmin } from "../../../contexts/AdminContext"
+import { useEditUserMutation } from "../hooks/useEditUserMutation"
 
-export const RenameFileModal = ({ isOpen, onClose }) => {
+export const EditUserModal = ({ isOpen, onClose }) => {
   const inputRef = useRef()
-  const { handleFileRename } = useFileOptions()
+  const { selectedUser } = useAdmin()
 
-  const handleConfirm = () => {
-    handleFileRename(inputRef.current.value)
+  const { mutate } = useEditUserMutation()
+
+  const handleConfirmUserEdition = () => {
+    //se o valor nao tiver sido alterado apenas fecha o modal
+    if (inputRef.current.value === selectedUser?.cota) {
+      onClose()
+      return
+    }
+    mutate({ userID: selectedUser?.id, cota: inputRef.current.value })
     onClose()
   }
 
   return (
     <Modal isOpen={isOpen}>
       <ModalContent>
-        <ModalHeader>Renomeie o arquivo</ModalHeader>
+        <ModalHeader>Editar usuario: {selectedUser?.id}</ModalHeader>
         <ModalBody>
-          <Input ref={inputRef} />
+          <Input
+            type="number"
+            min={100}
+            max={500}
+            ref={inputRef}
+            placeholder={`Cota: ${selectedUser?.cota}`}
+          />
         </ModalBody>
         <ModalFooter>
           <Button variant="text" color="var(--blue-2)" onClick={onClose}>
             Cancelar
           </Button>
           <Button
-            onClick={handleConfirm}
+            onClick={handleConfirmUserEdition}
             variant="outlined"
             color="var(--blue-2)"
           >

@@ -1,18 +1,18 @@
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { useAuth } from "../../contexts/AuthContext";
-import { useFolders } from "../../contexts/FolderContext";
+import { useNavigate } from "react-router-dom"
+import styled from "styled-components"
+import { useAuth } from "../../contexts/AuthContext"
+import { useFolders } from "../../contexts/FolderContext"
 
 export function UserMenu() {
-  const navigate = useNavigate();
-  const { user, setToken } = useAuth();
-  const { resetFolderContext } = useFolders();
+  const navigate = useNavigate()
+  const { user, setToken } = useAuth()
+  const { resetFolderContext } = useFolders()
 
   const handleLogout = () => {
-    setToken(null);
-    resetFolderContext();
-    navigate("/");
-  };
+    setToken(null)
+    resetFolderContext()
+    navigate("/")
+  }
 
   return (
     <Container>
@@ -22,7 +22,7 @@ export function UserMenu() {
         <LogoutButton onClick={handleLogout}>sair</LogoutButton>
       </div>
     </Container>
-  );
+  )
 }
 
 const Container = styled.div`
@@ -41,7 +41,7 @@ const Container = styled.div`
     flex-direction: column;
     align-items: start;
   }
-`;
+`
 
 const UserPortrait = styled.a`
   width: 67px;
@@ -51,14 +51,14 @@ const UserPortrait = styled.a`
   cursor: pointer;
 
   background-color: var(--bg);
-`;
+`
 
 const UserName = styled.h4`
   font-weight: 400;
-  font-size: 24px;
+  font-size: 18px;
   line-height: 29px;
   color: #ffffff;
-`;
+`
 
 const LogoutButton = styled.button`
   border: none;
@@ -66,8 +66,8 @@ const LogoutButton = styled.button`
   cursor: pointer;
 
   font-weight: 400;
-  font-size: 24px;
+  font-size: 18px;
   line-height: 29px;
   text-decoration-line: underline;
   color: #00c8ff;
-`;
+`

@@ -1,41 +1,41 @@
-import styled from "styled-components";
+import styled from "styled-components"
 import {
   MdMoreVert,
   MdDriveFileRenameOutline,
   MdDelete,
   MdDownload,
-} from "react-icons/md";
-import { useClickOutside } from "../../../../shared/hooks/useClickOutside";
-import { useToggle } from "../../../../shared/hooks/useToggle";
-import { useFolders } from "../../../../contexts/FolderContext";
-import { DeleteFileModal } from "../file-modals/DeleteFileModal";
-import { RenameFileModal } from "../file-modals/RenameFileModal";
-import { useFileOptions } from "../../hooks/files/useFileOptions";
+} from "react-icons/md"
+import { useClickOutside } from "../../../../shared/hooks/useClickOutside"
+import { useToggle } from "../../../../shared/hooks/useToggle"
+import { useFolders } from "../../../../contexts/FolderContext"
+import { useFileOptions } from "../../hooks/files/useFileOptions"
+import { RenameFileModal } from "../file-modals/RenameFileModal"
+import { DeleteFileModal } from "../file-modals/DeleteFileModal"
 
 export const FileDropdown = ({ fileData }) => {
-  const { setSelectedFile } = useFolders();
+  const { setSelectedFile } = useFolders()
   const {
     state: isDropdownOpen,
     setOff: closeDropdown,
     toggle: toggleDropdown,
-  } = useToggle();
+  } = useToggle()
   const {
     state: isRenameModalOpen,
     setOn: openRenameModal,
     setOff: closeRenameModal,
-  } = useToggle();
+  } = useToggle()
   const {
     state: isDeleteModalOpen,
     setOn: openDeleteModal,
     setOff: closeDeleteModal,
-  } = useToggle();
-  const { handleFileDownload } = useFileOptions();
-  const dropdownRef = useClickOutside(closeDropdown);
+  } = useToggle()
+  const { handleFileDownload } = useFileOptions()
+  const dropdownRef = useClickOutside(closeDropdown)
 
   const handleDropdownToggle = () => {
-    toggleDropdown();
-    setSelectedFile(fileData.id);
-  };
+    toggleDropdown()
+    setSelectedFile(fileData.id)
+  }
 
   return (
     <>
@@ -63,15 +63,15 @@ export const FileDropdown = ({ fileData }) => {
       <DeleteFileModal isOpen={isDeleteModalOpen} onClose={closeDeleteModal} />
       <RenameFileModal isOpen={isRenameModalOpen} onClose={closeRenameModal} />
     </>
-  );
-};
+  )
+}
 
 const Container = styled.div`
   position: absolute;
   top: 0;
   right: 0;
   z-index: 1000;
-`;
+`
 
 const DropdownMenuButton = styled.button`
   position: relative;
@@ -88,7 +88,7 @@ const DropdownMenuButton = styled.button`
   &:hover {
     background-color: var(--bg);
   }
-`;
+`
 
 const DropdownContent = styled.div`
   position: absolute;
@@ -97,7 +97,7 @@ const DropdownContent = styled.div`
   padding: 5px;
   box-shadow: var(--shadow);
   background-color: var(--bg);
-`;
+`
 
 const DropdownButton = styled.button`
   display: flex;
@@ -116,4 +116,4 @@ const DropdownButton = styled.button`
     background-color: var(--blue-2);
     color: white;
   }
-`;
+`

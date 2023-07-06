@@ -1,28 +1,28 @@
-import * as yup from "yup"; //biblioteca para validação de formulários
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../contexts/AuthContext";
-import { api } from "../../../shared/services/api";
-import { useMutation } from "react-query";
+import * as yup from "yup" //biblioteca para validação de formulários
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "../../../contexts/AuthContext"
+import { api } from "../../../shared/services/api"
+import { useMutation } from "react-query"
 
-import { Formik } from "formik"; //biblioteca para criar formularios em react, muito facil de usar, so seguir esse exemplo
-import { Input } from "../../../shared/components/Input";
-import { SubmitButton } from "../../../shared/components/SubmitButton";
-import UserForm from "../../../shared/components/Form";
+import { Formik } from "formik" //biblioteca para criar formularios em react, muito facil de usar, so seguir esse exemplo
+import { Input } from "../../../shared/components/Input"
+import { SubmitButton } from "../../../shared/components/SubmitButton"
+import UserForm from "../../../shared/components/Form"
 
 export function SignInForm({ onToLogin }) {
-  const { setToken, setUser } = useAuth();
-  const navigate = useNavigate();
+  const { setToken, setUser } = useAuth()
+  const navigate = useNavigate()
 
   const { mutate, isError, error } = useMutation(
     (values) => api.post("/usuarios/cadastro", values),
     {
       onSuccess: (data) => {
-        setToken(data.data.token);
-        setUser(data.data.user);
-        navigate("/usuario/pastas");
+        setToken(data.data.token)
+        setUser(data.data.user)
+        navigate("/usuario/pastas")
       },
     }
-  );
+  )
 
   return (
     <UserForm>
@@ -30,7 +30,7 @@ export function SignInForm({ onToLogin }) {
       <UserForm.SubTitle>
         Criar sua conta nos serviços pop Box
       </UserForm.SubTitle>
-      <UserForm.Error>{isError && error.response.data.error}</UserForm.Error>
+      <UserForm.Error>{isError && error.response.data}</UserForm.Error>
       <Formik
         initialValues={{
           nome: "",
@@ -56,5 +56,5 @@ export function SignInForm({ onToLogin }) {
         </UserForm.Inputs>
       </Formik>
     </UserForm>
-  );
+  )
 }
